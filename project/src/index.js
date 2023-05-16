@@ -33,7 +33,7 @@ const sp = new URLSearchParams(window.location.search);
 
 let sketch = function(p5) {
 
-    function setup() {
+    p5.setup = function() {
         start = Date.now();
         max_iter = 90;
         point_count = 0;
@@ -207,7 +207,7 @@ let sketch = function(p5) {
                 let x = p5.bezierPoint(-len * start_off, len, len, len * end_x_off, t);
                 let y = p5.bezierPoint(-len * start_off, 0, len, len * end_y_off, t);
 
-                if (x < innerWidth && y < innerHeight) {
+                if (x < width && y < height) {
                     // Fade colors based on distance to center
                     let fade = 1.2 * Math.floor(p5.dist(0, 0, x, y), 0, width * 1.1, 1, 0);
                     p5.stroke(hue, 80, 100 * fade, 0.9);
@@ -264,7 +264,7 @@ let sketch = function(p5) {
         p5.pop();
     }
 
-    function draw() {
+    p5.draw = function() {
 
         draw_bg();
         if (star) draw_star();
@@ -284,25 +284,22 @@ let sketch = function(p5) {
 
     // function to save an output, with a the unique hash as the filename (so you can always come back to it), 
     // when the user presses 's' (upper or lower-case)
-    function keyTyped() {
-        if (keyCode === 83) {
-            saveCanvas(fxhash, 'png');
+    p5.keyTyped = function(e) {
+
+        const keyS = 83;
+        const keys = 115;
+        if (e.keyCode === keyS || e.keyCode === keys) {
+            p5.saveCanvas(fxhash, 'png');
         }
         return false; // prevent any unwanted default browser behaviour
     }
 
-    function windowResized() {
+    p5.windowResized = function() {
         console.log("Resizing canvas to fit window");
         width = window.innerWidth;
         height = window.innerHeight;
         p5.resizeCanvas(width, height);
     }
-
-    p5.setup = setup;
-    p5.draw = draw;
-    p5.keyTyped = keyTyped;
-    p5.windowResized = windowResized;
-
 }
 
 new p5(sketch, window.document.body);
