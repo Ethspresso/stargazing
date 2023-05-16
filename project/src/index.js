@@ -14,7 +14,7 @@ let early_stop;
 // Star options
 let star_repeat;
 let star_ray_len;
-let star_points;
+let star_point_count;
 
 // Arc options
 let arc_count;
@@ -57,26 +57,26 @@ let sketch = function (p5) {
       'Forever and ever': [330, 45],
       'Is it real': [330, 30],
     }
+    let paletteNames = Object.keys(palettes);
 
     // Determine features
     arcs = true;
-    star = fxrand() > 0.8 ? true : false;
+    star = fxrand() < 0.8 ? true : false;
 
     // Arc features
-    let arc_counts = [4, 4, 8, 16, 24, 32, 32, 48, 64, 64, 128, 128];
-    let arc_count_idx = Math.floor(fxrand() * arc_counts.length);
-    arc_count = arc_counts[arc_count_idx];
-
-    let paletteNames = Object.keys(palettes);
-    palette = paletteNames[Math.floor(fxrand() * paletteNames.length)];
-
-    arc_point_count = fxrand() * 4096;
-    // let density_names = { 1024: 'Low', 2048: 'Medium', 4096: 'High' };
+    // original random distribution: [4, 4, 8, 16, 24, 32, 32, 48, 64, 64, 128, 128];
+    let arc_counts = ['4', '8', '16', '24', '32', '48', '64', '128'];
+    let arc_point_options = [1024, 2048, 3072, 4096];
+    arc_point_count = arc_point_options[Math.floor(p5.map(fxrand(), 0, 1, 0, arc_point_options.length))];
 
     // Star features
-    star_repeat = fxrand([128, 256, 512]);
-    star_ray_len = fxrand([0, 0.05, 0.1, 0.15, 0.2, 0.25]);
-    star_points = Math.floor(star_ray_len, 0, 0.25, 128, 512);
+    let star_repeat_opts = [128, 256, 512];
+    star_repeat = star_repeat_opts[Math.floor(fxrand() * star_repeat_opts.length)];
+    let star_ray_len_opts = [0, 0.05, 0.1, 0.15, 0.2, 0.25];
+    star_ray_len = star_ray_len_opts[Math.floor(fxrand() * star_ray_len_opts.length)];
+    star_point_count = p5.map(star_ray_len, 0, 0.25, 128, 512);
+
+    // Determine star size
     let star_size = 'Small';
     if ((star_repeat === 512 && star_ray_len >= 0.2) ||
       (star_repeat === 256 && star_ray_len === 0.25)) {
@@ -91,30 +91,54 @@ let sketch = function (p5) {
     }
 
     // Lower values cause more angled lines
-    end_x_off = fxrand(-3, 5);
-    end_y_off = fxrand(2, 5);
+    end_x_off = p5.map(fxrand(), 0, 1, -3, 5);
+    end_y_off = p5.map(fxrand(), 0, 1, 2, 5);
 
     // Controls the amount of negative space in the middle
     switch (star_size) {
       case 'Small':
-        start_off = fxrand(0.03, 0.1);
+        start_off = p5.map(fxrand(), 0, 1, 0.03, 0.1);
         break;
       case 'Medium':
-        start_off = fxrand(0.1, 0.2);
+        start_off = p5.map(fxrand(), 0, 1, 0.1, 0.2);
         break;
       case 'Big':
-        start_off = fxrand(0.2, 0.3);
+        start_off = p5.map(fxrand(), 0, 1, 0.2, 0.3);
         break;
       case 'Massive':
-        start_off = fxrand(0.3, 0.4);
+        start_off = p5.map(fxrand(), 0, 1, 0.3, 0.4);
         break;
       default:
         // 'No star' variants can be any size
-        start_off = fxrand(0.03, 0.4);
+        start_off = p5.map(fxrand(), 0, 1, 0.03, 0.4);
         break;
     }
 
+    // define tunable parameters
+    $fx.params([
+      {
+        id: 'palette',
+        name: 'Palette',
+        type: 'select',
+        default: paletteNames[0],
+        options: {
+          options: paletteNames
+        }
+      },
+      {
+        id: 'beam_count',
+        name: 'Beam count',
+        type: 'select',
+        default: '128',
+        options: {
+          options: arc_counts
+        }
+      }
+    ]);
+
     // fx(hash) features must be set before drawing a single pixel on the screen
+    palette = $fx.getParam('palette');
+    arc_count = $fx.getParam('beam_count');
     const features = {
       'Color palette': palette,
       'Has star': star,
@@ -124,18 +148,6 @@ let sketch = function (p5) {
       'Beam density': arc_point_count < 1024 ? 'Light' : arc_point_count < 2048 ? 'Medium' : 'Dense',
     }
     $fx.features(features);
-
-    // define tunable parameters
-    $fx.params([
-      {
-        id: 'palette',
-        name: 'Palette',
-        type: 'select',
-        options: {
-          options: paletteNames
-        }
-      }
-    ]);
 
     width = window.innerWidth;
     height = window.innerHeight;
@@ -156,6 +168,7 @@ let sketch = function (p5) {
       }
     }
 
+    draw_bg();
   }
 
   // Draw dark twinkling star background
@@ -176,10 +189,10 @@ let sketch = function (p5) {
 
     // Draw each background star
     for (let i = 0; i < bg_point_count; i++) {
-      let x = fxrand(width);
-      let y = fxrand(height);
-      if (i < bg_point_count * 0.9) p5.stroke(0, 0, fxrand(10, 70), 0.9);
-      else p5.stroke(240, 90, fxrand(25, 70), 0.9);
+      let x = fxrand() * width;
+      let y = fxrand() * height;
+      if (i < bg_point_count * 0.9) p5.stroke(0, 0, p5.map(fxrand(), 0, 1, 35, 70), 0.9);
+      else p5.stroke(240, 90, p5.map(fxrand(), 0, 1, 50, 100), 0.9);
       p5.strokeWeight(2);
       p5.point(x, y);
       point_count++;
@@ -213,8 +226,8 @@ let sketch = function (p5) {
           p5.stroke(hue, 80, 100 * fade, 0.9);
 
           // Perturb the location a bit, based on distance to center
-          let amplitude = 1.2 * Math.floor(p5.dist(0, 0, x, y), 0, width * 1.1, 2, 8);
-          let off = amplitude * fxrand(-1, 1);
+          let amplitude = 1.2 * p5.map(p5.dist(0, 0, x, y), 0, width * 1.1, 2, 8);
+          let off = amplitude * p5.map(fxrand(), 0, 1, -1, 1);
           p5.point(x + off, y + off);
           point_count++;
         } else {
@@ -231,7 +244,7 @@ let sketch = function (p5) {
     p5.pop();
   }
 
-  function draw_star() {
+  function draw_star(iter) {
     p5.noFill();
     p5.strokeWeight(2);
 
@@ -239,11 +252,17 @@ let sketch = function (p5) {
 
     p5.push();
     let angle = 0;
+    let batch_size = star_point_count / max_iter * 2;
 
     for (let i = 0; i < star_repeat; i++) {
       // Make length vary a bit
-      let len = width * 0.2 + fxrand(-width * 0.05, width * star_ray_len);
-      for (let t = 0; t < 1; t += 1 / star_points) {
+      let len = width * 0.2 + p5.map(fxrand(), 0, 1, -width * 0.05, width * star_ray_len);
+
+      // Draw a portion determined by 'iter' argument
+      let start_t = ((iter - 1) * batch_size) / star_point_count;
+      let end_t = iter * batch_size / star_point_count;
+
+      for (let t = start_t; t < end_t; t += 1 / star_point_count) {
         let x = p5.bezierPoint(-len * 0.01, 0, 0, len, t);
         let y = p5.bezierPoint(-len * 0.01, 0, 0, len, t);
 
@@ -253,7 +272,7 @@ let sketch = function (p5) {
 
         // Perturb the location a bit, based on distance to center
         let amplitude = 1.2 * p5.map(p5.dist(0, 0, x, y), 0, width * 1.1, 2, 8);
-        let off = amplitude * fxrand(-1, 1);
+        let off = amplitude * p5.map(fxrand(), 0, 1, -1, 1);
         p5.point(x + off, y + off);
         point_count++;
       }
@@ -265,12 +284,8 @@ let sketch = function (p5) {
   }
 
   p5.draw = function () {
-
-    draw_bg();
-    if (star) draw_star();
-
+    if (star) draw_star(p5.frameCount);
     if (arcs) draw_arcs(p5.frameCount);
-
 
     if ((arcs && p5.frameCount >= max_iter) || (!arcs && p5.frameCount === 1) || early_stop) {
       // end animation and call fxpreview
@@ -285,7 +300,6 @@ let sketch = function (p5) {
   // function to save an output, with a the unique hash as the filename (so you can always come back to it),
   // when the user presses 's' (upper or lower-case)
   p5.keyTyped = function (e) {
-
     const keyS = 83;
     const keys = 115;
     if (e.keyCode === keyS || e.keyCode === keys) {
