@@ -266,7 +266,7 @@ let sketch = function (p5) {
     if (star) draw_star(p5.frameCount);
     if (arcs) draw_arcs(p5.frameCount);
 
-    if ((arcs && p5.frameCount >= max_iter) || (!arcs && p5.frameCount === 1) || early_stop) {
+    if (p5.frameCount >= max_iter || early_stop) {
       // end animation and call fxpreview
       p5.noLoop();
       fxpreview();
