@@ -75,7 +75,7 @@ let sketch = function (p5) {
     star_repeat = star_repeat_opts[Math.floor(fxrand() * star_repeat_opts.length)];
     let star_ray_len_opts = [0, 0.05, 0.1, 0.15, 0.2, 0.25];
     star_ray_len = star_ray_len_opts[Math.floor(fxrand() * star_ray_len_opts.length)];
-    star_point_count = p5.map(star_ray_len, 0, 0.25, 128, 512);
+    star_point_count = p5.map(star_ray_len, 0, 0.25, 128, 1024);
 
     // Determine star size
     let star_size = 'Small';
@@ -90,6 +90,8 @@ let sketch = function (p5) {
       (star_repeat === 128 && star_ray_len >= 0.15)) {
       star_size = 'Medium';
     }
+
+    star_repeat *= 2;
 
     // Lower values cause more angled lines
     end_x_off = p5.map(fxrand(), 0, 1, -3, 5);
