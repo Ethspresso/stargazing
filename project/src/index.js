@@ -58,14 +58,15 @@ let sketch = function (p5) {
       'Is it real': [330, 30],
     }
     let paletteNames = Object.keys(palettes);
+    palette = paletteNames[Math.floor(fxrand() * paletteNames.length)];
 
     // Determine features
     arcs = true;
     star = fxrand() < 0.8 ? true : false;
 
     // Arc features
-    // original random distribution: [4, 4, 8, 16, 24, 32, 32, 48, 64, 64, 128, 128];
-    let arc_counts = ['4', '8', '16', '24', '32', '48', '64', '128'];
+    let arc_counts = [4, 4, 8, 16, 24, 32, 32, 48, 64, 64, 128, 128];
+    arc_count = arc_counts[Math.floor(fxrand() * arc_counts.length)];
     let arc_point_options = [1024, 2048, 3072, 4096];
     arc_point_count = arc_point_options[Math.floor(p5.map(fxrand(), 0, 1, 0, arc_point_options.length))];
 
@@ -114,31 +115,7 @@ let sketch = function (p5) {
         break;
     }
 
-    // define tunable parameters
-    $fx.params([
-      {
-        id: 'palette',
-        name: 'Palette',
-        type: 'select',
-        default: paletteNames[0],
-        options: {
-          options: paletteNames
-        }
-      },
-      {
-        id: 'beam_count',
-        name: 'Beam count',
-        type: 'select',
-        default: '128',
-        options: {
-          options: arc_counts
-        }
-      }
-    ]);
-
     // fx(hash) features must be set before drawing a single pixel on the screen
-    palette = $fx.getParam('palette');
-    arc_count = $fx.getParam('beam_count');
     const features = {
       'Color palette': palette,
       'Has star': star,
