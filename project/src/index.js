@@ -22,6 +22,7 @@ let arc_point_count;
 let start_off;
 let end_x_off;
 let end_y_off;
+let max_point_amplitude;
 
 let width;
 let height
@@ -69,6 +70,7 @@ let sketch = function (p5) {
     arc_count = arc_counts[Math.floor(fxrand() * arc_counts.length)];
     let arc_point_options = [1024, 2048, 3072, 4096];
     arc_point_count = arc_point_options[Math.floor(p5.map(fxrand(), 0, 1, 0, arc_point_options.length))];
+    max_point_amplitude = window.innerWidth / 100;
 
     // Star features
     let star_repeat_opts = [128, 256, 512];
@@ -201,13 +203,13 @@ let sketch = function (p5) {
 
         if (x < width && y < height) {
           // Fade colors based on distance to center
-          let fade = 1.2 * Math.floor(p5.dist(0, 0, x, y), 0, width * 1.1, 1, 0);
+          let fade = 1.2 * Math.floor(p5.dist(x, y, 0, 0), 0, width * 1.1, 1, 0);
           p5.stroke(hue, 80, 100 * fade, 0.9);
 
           // Perturb the location a bit, based on distance to center
-          let amplitude = 1.2 * p5.map(p5.dist(0, 0, x, y), 0, width * 1.1, 2, 8);
+          let amplitude = p5.map(p5.dist(x, y, 0, 0), 0, width * 1.2, 1, max_point_amplitude);
           let off = amplitude * p5.map(fxrand(), 0, 1, -1, 1);
-          p5.point(x + off, y + off);
+          p5.point(x + off, y - off);
           point_count++;
         } else {
           early_stop = true;
@@ -264,7 +266,7 @@ let sketch = function (p5) {
 
   p5.draw = function () {
     if (star) draw_star(p5.frameCount);
-    if (arcs) draw_arcs(p5.frameCount);
+    //if (arcs) draw_arcs(p5.frameCount);
 
     if (p5.frameCount >= max_iter || early_stop) {
       // end animation and call fxpreview
