@@ -130,8 +130,8 @@ let sketch = function (p5) {
 
     width = window.innerWidth;
     height = window.innerHeight;
-    console.log('Rendering at', width, 'x', height);
     p5.createCanvas(width, height, p5.WEBGL);
+    console.log('Rendering at', width, 'x', height);
 
     p5.colorMode(p5.HSB, 360, 100, 100, 1.0);
     p5.setAttributes('antialias', true);
@@ -292,6 +292,14 @@ let sketch = function (p5) {
     width = window.innerWidth;
     height = window.innerHeight;
     p5.resizeCanvas(width, height);
+    console.log('Resizing to', width, 'x', height);
+
+    start = Date.now();
+    p5.frameCount = 1;
+    early_stop = false;
+    draw_bg();
+    p5.loop();
+    p5.draw();
   }
 }
 
