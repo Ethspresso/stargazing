@@ -7,7 +7,8 @@ let palette;
 let palettes;
 let arcs;
 let star;
-let max_iter;
+let max_arch_iter;
+let max_star_iter;
 let point_count;
 let early_stop;
 
@@ -36,7 +37,8 @@ let sketch = function (p5) {
 
   p5.setup = function () {
     start = Date.now();
-    max_iter = 90;
+    max_arch_iter = 90;
+    max_star_iter = 3;
     point_count = 0;
     early_stop = false;
 
@@ -142,7 +144,6 @@ let sketch = function (p5) {
     p5.angleMode(p5.DEGREES);
 
     // Iteration details to console
-    console.log('fxhash:', fxhash);
     for (const key in features) {
       if (features.hasOwnProperty(key)) {
         console.log(key, ': ', features[key]);
@@ -187,7 +188,7 @@ let sketch = function (p5) {
 
     let hue = palettes[palette][1];
 
-    let batch_size = arc_point_count / max_iter;
+    let batch_size = arc_point_count / max_arch_iter;
 
     // Draw a portion of the arcs, determined by 'iter' argument
     let start_t = ((iter - 1) * batch_size) / arc_point_count;
@@ -226,6 +227,8 @@ let sketch = function (p5) {
   }
 
   function draw_star(iter) {
+    if (iter > max_star_iter) return;
+
     p5.noFill();
     p5.strokeWeight(2);
 
@@ -233,15 +236,16 @@ let sketch = function (p5) {
 
     p5.push();
     let angle = 0;
-    let batch_size = star_point_count / max_iter * 2;
+    let start_t;
+    let end_t;
 
     for (let i = 0; i < star_repeat; i++) {
       // Make length vary a bit
       let len = width * 0.2 + p5.map(fxrand(), 0, 1, -width * 0.05, width * star_ray_len);
 
       // Draw a portion determined by 'iter' argument
-      let start_t = ((iter - 1) * batch_size) / star_point_count;
-      let end_t = iter * batch_size / star_point_count;
+      end_t = p5.map(iter, 0, max_star_iter, 0, 1);
+      start_t = Math.max(0, end_t - 1/max_star_iter);
 
       for (let t = start_t; t < end_t; t += 1 / star_point_count) {
         let x = p5.bezierPoint(-len * 0.01, 0, 0, len, t);
@@ -268,7 +272,7 @@ let sketch = function (p5) {
     if (star) draw_star(p5.frameCount);
     //if (arcs) draw_arcs(p5.frameCount);
 
-    if (p5.frameCount >= max_iter || early_stop) {
+    if (p5.frameCount >= max_arch_iter || early_stop) {
       // end animation and call fxpreview
       p5.noLoop();
       fxpreview();
