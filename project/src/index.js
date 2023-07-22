@@ -42,7 +42,7 @@ let sketch = function (p5) {
   p5.setup = function () {
     start = Date.now();
     max_arch_iter = 90;
-    max_star_iter = 30;
+    max_star_iter = 60;
     point_count = 0;
     early_stop = false;
 
@@ -134,12 +134,10 @@ let sketch = function (p5) {
     // fx(hash) features must be set before drawing a single pixel on the screen
     const features = {
       'Color palette': palette,
-      'Has star': star,
-      'Has beams': arcs,
       'Star size': star ? star_size : 'No star',
       'Gravitational bend': twistyness,
       'Beam count': arc_count,
-      'Beam density': arc_point_count < 1024 ? 'Light' : arc_point_count < 2048 ? 'Medium' : 'Dense',
+      'Beam density': arc_point_count <= 1024 ? 'Light' : arc_point_count <= 2048 ? 'Medium' : 'Dense',
     }
     $fx.features(features);
 
@@ -273,7 +271,6 @@ let sketch = function (p5) {
         p5.point(x + off, y + off);
         point_count++;
       }
-
       p5.rotate(360 / star_repeat)
     }
     p5.pop();
@@ -297,7 +294,7 @@ let sketch = function (p5) {
       draw_arcs(p5.frameCount - max_star_iter);
     }
 
-    if (p5.frameCount >= max_arch_iter || early_stop) {
+    if (p5.frameCount >= (max_arch_iter+max_star_iter) || early_stop) {
       // end animation and call fxpreview
       p5.noLoop();
       fxpreview();
