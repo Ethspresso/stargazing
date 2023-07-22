@@ -38,7 +38,7 @@ let sketch = function (p5) {
   p5.setup = function () {
     start = Date.now();
     max_arch_iter = 90;
-    max_star_iter = 3;
+    max_star_iter = 30;
     point_count = 0;
     early_stop = false;
 
@@ -72,7 +72,7 @@ let sketch = function (p5) {
     arc_count = arc_counts[Math.floor(fxrand() * arc_counts.length)];
     let arc_point_options = [1024, 2048, 3072, 4096];
     arc_point_count = arc_point_options[Math.floor(p5.map(fxrand(), 0, 1, 0, arc_point_options.length))];
-    max_point_amplitude = window.innerWidth / 100;
+    max_point_amplitude = window.innerWidth / 60;
 
     // Star features
     let star_repeat_opts = [128, 256, 512];
@@ -265,7 +265,9 @@ let sketch = function (p5) {
 
   p5.draw = function () {
     if (star) draw_star(p5.frameCount);
-    //if (arcs) draw_arcs(p5.frameCount);
+    if (p5.frameCount > max_star_iter) {
+      draw_arcs(p5.frameCount - max_star_iter);
+    }
 
     if (p5.frameCount >= max_arch_iter || early_stop) {
       // end animation and call fxpreview
