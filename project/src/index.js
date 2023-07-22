@@ -271,6 +271,18 @@ let sketch = function (p5) {
     p5.pop();
   }
 
+  function draw_star_body() {
+    // Draw solid star body in same color as star light rays
+    star_size_px_min = Math.floor(width/20);
+    star_size_px_max = Math.floor(width/4);
+
+    if (star) {
+      p5.fill(palettes[palette][0], 90, 90, 0.8);
+      star_size_px = p5.map(start_off, 0.03, 0.4, star_size_px_min, star_size_px_max);
+      p5.circle(0, 0, star_size_px);
+    }
+  }
+
   p5.draw = function () {
     if (star) draw_star(p5.frameCount);
     if (p5.frameCount > max_star_iter) {
