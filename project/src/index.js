@@ -195,7 +195,6 @@ let sketch = function (p5) {
     let end_t = iter * batch_size / arc_point_count;
 
     p5.push();
-    let angle = 0;
     let len = width * 0.5;
     for (let i = 0; i < arc_count; i++) {
       for (let t = start_t; t < end_t; t += 1 / arc_point_count) {
@@ -218,9 +217,7 @@ let sketch = function (p5) {
         }
       }
 
-      angle += 360 / arc_count;
-      p5.rotate(angle)
-
+      p5.rotate(360 / arc_count)
       if (early_stop) break;
     }
     p5.pop();
@@ -235,7 +232,6 @@ let sketch = function (p5) {
     let hue = palettes[palette][0];
 
     p5.push();
-    let angle = 0;
     let start_t;
     let end_t;
 
@@ -262,8 +258,7 @@ let sketch = function (p5) {
         point_count++;
       }
 
-      angle += 360 / star_repeat;
-      p5.rotate(angle)
+      p5.rotate(360 / star_repeat)
     }
     p5.pop();
   }
