@@ -84,6 +84,7 @@ let sketch = function (p5) {
     let star_ray_len_opts = [0, 0.05, 0.1, 0.15, 0.2, 0.25];
     star_ray_len = star_ray_len_opts[Math.floor(fxrand() * star_ray_len_opts.length)];
     star_point_count = p5.map(star_ray_len, 0, 0.25, 128, 1024);
+    star_point_count *= 10;
 
     // Determine star size
     let star_size = 'Small';
@@ -280,10 +281,10 @@ let sketch = function (p5) {
     // Draw solid star body in same color as star light rays
     star_size_px_min = Math.floor(width/20);
     star_size_px_max = Math.floor(width/4);
+    star_size_px = p5.map(start_off, 0.03, 0.4, star_size_px_min, star_size_px_max);
 
     if (star) {
       p5.fill(palettes[palette][0], 90, 90, 0.8);
-      star_size_px = p5.map(start_off, 0.03, 0.4, star_size_px_min, star_size_px_max);
       p5.circle(0, 0, star_size_px);
     }
   }
