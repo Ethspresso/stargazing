@@ -27,6 +27,7 @@ let start_off;
 let end_x_off;
 let end_y_off;
 let max_point_amplitude;
+let twistyness;
 
 let width;
 let height
@@ -98,11 +99,17 @@ let sketch = function (p5) {
       star_size = 'Medium';
     }
 
+    // More jazz
     star_repeat *= 2;
 
-    // Lower values cause more angled lines
+    // Lower value of end_x_off causes more angled lines
     end_x_off = p5.map(fxrand(), 0, 1, -3, 5);
     end_y_off = p5.map(fxrand(), 0, 1, 2, 5);
+    // Determine feature value
+    if (end_x_off < -1.5) twistyness = "Large";
+    else if (end_x_off < 0.5) twistyness = "Medium";
+    else if (end_x_off < 4.5) twistyness = "Small";
+    else twistyness = "None";
 
     // Controls the amount of negative space in the middle
     switch (star_size) {
@@ -130,6 +137,7 @@ let sketch = function (p5) {
       'Has star': star,
       'Has beams': arcs,
       'Star size': star ? star_size : 'No star',
+      'Gravitational bend': twistyness,
       'Beam count': arc_count,
       'Beam density': arc_point_count < 1024 ? 'Light' : arc_point_count < 2048 ? 'Medium' : 'Dense',
     }
