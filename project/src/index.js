@@ -16,6 +16,9 @@ let early_stop;
 let star_repeat;
 let star_ray_len;
 let star_point_count;
+let star_size_px;
+let star_size_px_min;
+let star_size_px_max;
 
 // Arc options
 let arc_count;
@@ -151,6 +154,7 @@ let sketch = function (p5) {
     }
 
     draw_bg();
+    draw_star_body();
   }
 
   // Draw dark twinkling star background
@@ -235,6 +239,9 @@ let sketch = function (p5) {
     let start_t;
     let end_t;
 
+    // Skip drawing star light rays inside this circle
+    let skip_radius = Math.floor(star_size_px/3);
+
     for (let i = 0; i < star_repeat; i++) {
       // Make length vary a bit
       let len = width * 0.2 + p5.map(fxrand(), 0, 1, -width * 0.05, width * star_ray_len);
@@ -244,8 +251,9 @@ let sketch = function (p5) {
       start_t = Math.max(0, end_t - 1/max_star_iter);
 
       for (let t = start_t; t < end_t; t += 1 / star_point_count) {
-        let x = p5.bezierPoint(-len * 0.01, 0, 0, len, t);
-        let y = p5.bezierPoint(-len * 0.01, 0, 0, len, t);
+        let x = p5.bezierPoint(start_off, 0, 0, len, t);
+        let y = p5.bezierPoint(start_off, 0, 0, len, t);
+        if (x < skip_radius && y < skip_radius) continue;
 
         // Fade colors based on distance to center
         let fade = p5.map(p5.dist(0, 0, x, y), 0, width / 2, 1, 0.4);
@@ -301,6 +309,7 @@ let sketch = function (p5) {
     p5.frameCount = 1;
     early_stop = false;
     draw_bg();
+    draw_star_body();
     p5.loop();
     p5.draw();
   }
