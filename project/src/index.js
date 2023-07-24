@@ -1,8 +1,9 @@
 import p5 from 'p5';
 
-let start;
-
 // General options
+let start;
+let width;
+let height;
 let palette;
 let palettes;
 let arcs;
@@ -20,7 +21,7 @@ let star_size_px;
 let star_size_px_min;
 let star_size_px_max;
 
-// Arc options
+// Beam options
 let arc_count;
 let arc_point_count;
 let start_off;
@@ -28,14 +29,6 @@ let end_x_off;
 let end_y_off;
 let max_point_amplitude;
 let twistyness;
-
-let width;
-let height
-
-console.log('Current hash', fxhash);
-
-const sp = new URLSearchParams(window.location.search);
-//console.log(sp);
 
 let sketch = function (p5) {
 
@@ -136,7 +129,7 @@ let sketch = function (p5) {
     const features = {
       'Color palette': palette,
       'Star size': star ? star_size : 'No star',
-      'Gravitational bend': twistyness,
+      'Pitch angle': twistyness,
       'Beam count': arc_count,
       'Beam density': arc_point_count <= 1024 ? 'Light' : arc_point_count <= 2048 ? 'Medium' : 'Dense',
     }
@@ -305,7 +298,7 @@ let sketch = function (p5) {
     }
   }
 
-  // function to save an output, with a the unique hash as the filename (so you can always come back to it),
+  // function to save an output with the unique hash as the filename,
   // when the user presses 's' (upper or lower-case)
   p5.keyTyped = function (e) {
     const keyS = 83;
@@ -317,11 +310,10 @@ let sketch = function (p5) {
   }
 
   p5.windowResized = function () {
-    console.log('Resizing canvas to fit window');
     width = window.innerWidth;
     height = window.innerHeight;
     p5.resizeCanvas(width, height);
-    console.log('Resizing to', width, 'x', height);
+    console.log('Resized to', width, 'x', height);
 
     start = Date.now();
     p5.frameCount = 1;
