@@ -65,8 +65,9 @@ let sketch = function (p5) {
     // Determine beam features
     let arc_counts = [4, 4, 8, 16, 24, 32, 32, 48, 64, 64, 128, 128];
     arc_count = arc_counts[Math.floor(fxrand() * arc_counts.length)];
-    let arc_point_options = [1024, 2048, 3072, 4096];
-    arc_point_count = arc_point_options[Math.floor(p5.map(fxrand(), 0, 1, 0, arc_point_options.length))];
+    let arc_point_count_min = 4000 * (window.innerWidth/1000);
+    let arc_point_count_max = 16000 * (window.innerWidth/1000);
+    arc_point_count = Math.floor(p5.map(fxrand(), 0, 1, arc_point_count_min, arc_point_count_max));
     max_point_amplitude = window.innerWidth / 60;
 
     // Determine star features
@@ -130,19 +131,26 @@ let sketch = function (p5) {
       'Star size': star ? star_size : 'No star',
       'Pitch angle': twistyness,
       'Beam count': arc_count,
-      'Beam density': arc_point_count <= 1024 ? 'Light' : arc_point_count <= 2048 ? 'Medium' : 'Dense',
+      'Beam density': arc_point_count/arc_point_count_max <= 0.3 ? 'Light' : arc_point_count/arc_point_count_max <= 0.6 ? 'Medium' : 'Dense',
     }
     $fx.features(features);
 
-    width = window.innerWidth;
-    height = window.innerHeight;
+    // Parse URL params
+    const sp = new URLSearchParams(window.location.search);
+    for (val of sp.values()) {
+      console.log(val);
+    }
+
+    // Reduce the size a tiny bit to avoid scrollbars
+    width = window.innerWidth * 0.99;
+    height = window.innerHeight * 0.99;
     p5.createCanvas(width, height);
     console.log('Rendering at', width, 'x', height);
 
     // Create a buffer to draw everything to
     // Use fixed width and flexible height based on current aspect ratio,
     // so that when we draw the buffer it appears to be fullscreen
-    buffer_width = 1200;
+    buffer_width = 2400;
     fullscreen_ratio = height/width;
     buffer = p5.createGraphics(buffer_width, Math.floor(buffer_width*fullscreen_ratio), p5.WEBGL);
     console.log('Created buffer at', buffer.width, 'x', buffer.height);
@@ -315,8 +323,10 @@ let sketch = function (p5) {
   // Show the buffer on screen
   function show_buffer(b) {
     p5.push();
+    p5.background('black');
     let x = 0;
     let y = 0;
+
     if (width*fullscreen_ratio > height) {
       y = -(width*fullscreen_ratio - height)/2
     }
@@ -328,10 +338,10 @@ let sketch = function (p5) {
     p5.background('black');
     p5.textFont('Verdana');
     p5.textAlign(p5.CENTER);
-    p5.textSize(48);
+    p5.textSize(Math.floor(48*(window.innerHeight/1000)));
     p5.fill('white');
     p5.stroke('white');
-    p5.text('Drawing star... ' + amount + '%', width/2, height/2);
+    p5.text('Drawing... ' + amount + '%', innerWidth/2, innerHeight/2);
   }
 
   // function to save an output with the unique hash as the filename,
@@ -340,7 +350,7 @@ let sketch = function (p5) {
     const keyS = 83;
     const keys = 115;
     if (e.keyCode === keyS || e.keyCode === keys) {
-      buffer.save(fxhash + '_' + buffer.width + 'x' + buffer.height, 'jpg');
+      p5.saveCanvas(buffer, fxhash + '_' + buffer.width + 'x' + buffer.height, 'jpg')
     }
     return false; // prevent any unwanted default browser behaviour
   }
