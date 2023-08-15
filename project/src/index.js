@@ -6,6 +6,7 @@ let width;
 let height;
 let buffer;
 let buffer_width;
+let buffer_height;
 let fullscreen_ratio;
 let palette;
 let palettes;
@@ -48,7 +49,7 @@ let sketch = function (p5) {
       'Into the matrix': [15, 45],
       'The core': [15, 30],
       'Burning': [30, 45],
-      'A summer day': [45, 45],
+      'Summer in space': [45, 45],
       'The vast universe': [215, 45],
       'Expanding': [215, 30],
       'Neptune': [240, 45],
@@ -62,13 +63,23 @@ let sketch = function (p5) {
     let paletteNames = Object.keys(palettes);
     palette = paletteNames[Math.floor(fxrand() * paletteNames.length)];
 
+    // Parse URL params
+    const sp = new URLSearchParams(window.location.search);
+    const requested_width = sp.get("w");
+    if (requested_width) console.log('Requested rendering width is', requested_width, 'px');
+    // Determine buffer dimentions early, to use that for point count calculations
+    buffer_width = 2560;
+    if (requested_width) buffer_width = requested_width;
+    fullscreen_ratio = 9/16;
+    buffer_height = Math.floor(buffer_width*fullscreen_ratio);
+
     // Determine beam features
     let arc_counts = [4, 4, 8, 16, 24, 32, 32, 48, 64, 64, 128, 128];
     arc_count = arc_counts[Math.floor(fxrand() * arc_counts.length)];
-    let arc_point_count_min = 4000 * (window.innerWidth/1000);
-    let arc_point_count_max = 16000 * (window.innerWidth/1000);
+    let arc_point_count_min = 4000 * (buffer_width/1000);
+    let arc_point_count_max = 16000 * (buffer_width/1000);
     arc_point_count = Math.floor(p5.map(fxrand(), 0, 1, arc_point_count_min, arc_point_count_max));
-    max_point_amplitude = window.innerWidth / 60;
+    max_point_amplitude = buffer_width / 60;
 
     // Determine star features
     star = fxrand() < 0.8 ? true : false;
@@ -131,22 +142,17 @@ let sketch = function (p5) {
     }
     $fx.features(features);
 
-    // Parse URL params
-    const sp = new URLSearchParams(window.location.search);
-
     // Reduce the size a tiny bit to avoid scrollbars
     width = window.innerWidth * 0.99;
     height = window.innerHeight * 0.99;
     p5.createCanvas(width, height);
     console.log('Rendering at', width, 'x', height);
+    p5.pixelDensity(1);
 
     // Create a buffer to draw everything to
-    // Use fixed width and flexible height based on current aspect ratio,
-    // so that when we draw the buffer it appears to be fullscreen
-    buffer_width = 2400;
-    fullscreen_ratio = height/width;
-    buffer = p5.createGraphics(buffer_width, Math.floor(buffer_width*fullscreen_ratio), p5.WEBGL);
+    buffer = p5.createGraphics(buffer_width, buffer_height, p5.WEBGL);
     console.log('Created buffer at', buffer.width, 'x', buffer.height);
+    buffer.pixelDensity(1);
 
     buffer.colorMode(p5.HSB, 360, 100, 100, 1.0);
     buffer.setAttributes('antialias', true);
@@ -316,12 +322,9 @@ let sketch = function (p5) {
   function show_buffer(b) {
     p5.push();
     p5.background('black');
+    // Center the image on screen
     let x = 0;
-    let y = 0;
-
-    if (width*fullscreen_ratio > height) {
-      y = -(width*fullscreen_ratio - height)/2
-    }
+    let y = (height - width*fullscreen_ratio)/2;
     p5.image(b, x, y, width, width*fullscreen_ratio);
     p5.pop();
   }
@@ -350,8 +353,8 @@ let sketch = function (p5) {
   }
 
   p5.windowResized = function () {
-    width = window.innerWidth;
-    height = window.innerHeight;
+    width = Math.floor(window.innerWidth);
+    height = Math.floor(window.innerHeight);
     p5.resizeCanvas(width, height);
     console.log('Resized to', width, 'x', height);
     show_buffer(buffer);
