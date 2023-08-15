@@ -72,29 +72,25 @@ let sketch = function (p5) {
 
     // Determine star features
     star = fxrand() < 0.8 ? true : false;
-    let star_repeat_opts = [128, 256, 512];
+    let star_repeat_opts = [256, 512, 1024];
     star_repeat = star_repeat_opts[Math.floor(fxrand() * star_repeat_opts.length)];
     let star_ray_len_opts = [0, 0.05, 0.1, 0.15, 0.2, 0.25];
     star_ray_len = star_ray_len_opts[Math.floor(fxrand() * star_ray_len_opts.length)];
-    star_point_count = p5.map(star_ray_len, 0, 0.25, 128, 1024);
-    star_point_count *= 10;
+    star_point_count = p5.map(star_ray_len, 0, 0.25, 1280, 10240);
 
     // Determine star size
     let star_size = 'Small';
-    if ((star_repeat === 512 && star_ray_len >= 0.2) ||
-      (star_repeat === 256 && star_ray_len === 0.25)) {
+    if ((star_repeat === 1024 && star_ray_len >= 0.2) ||
+      (star_repeat === 512 && star_ray_len === 0.25)) {
       star_size = 'Massive';
-    } else if ((star_repeat === 512 && star_ray_len >= 0.1) ||
-      (star_repeat === 256 && star_ray_len >= 0.15)) {
+    } else if ((star_repeat === 1024 && star_ray_len >= 0.1) ||
+      (star_repeat === 512 && star_ray_len >= 0.15)) {
       star_size = 'Big';
-    } else if ((star_repeat === 512) ||
-      (star_repeat === 256 && star_ray_len >= 0.1) ||
-      (star_repeat === 128 && star_ray_len >= 0.15)) {
+    } else if ((star_repeat === 1024) ||
+      (star_repeat === 512 && star_ray_len >= 0.1) ||
+      (star_repeat === 256 && star_ray_len >= 0.15)) {
       star_size = 'Medium';
     }
-
-    // More jazz
-    star_repeat *= 2;
 
     // Lower value of end_x_off causes more angled lines
     end_x_off = p5.map(fxrand(), 0, 1, -3, 5);
@@ -253,9 +249,6 @@ let sketch = function (p5) {
     let start_t;
     let end_t;
 
-    // Skip drawing star light rays inside this circle
-    let skip_radius = Math.floor(star_size_px/3);
-
     for (let i = 0; i < star_repeat; i++) {
       // Make length vary a bit
       let len = b.width * 0.2 + p5.map(fxrand(), 0, 1, -b.width * 0.05, b.width * star_ray_len);
@@ -267,7 +260,6 @@ let sketch = function (p5) {
       for (let t = start_t; t < end_t; t += 1 / star_point_count) {
         let x = b.bezierPoint(start_off, 0, 0, len, t);
         let y = b.bezierPoint(start_off, 0, 0, len, t);
-        if (x < skip_radius && y < skip_radius) continue;
 
         // Fade colors based on distance to center
         let fade = p5.map(b.dist(0, 0, x, y), 0, b.width / 2, 1, 0.4);
@@ -291,8 +283,11 @@ let sketch = function (p5) {
     star_size_px = p5.map(start_off, 0.03, 0.4, star_size_px_min, star_size_px_max);
 
     if (star) {
+      b.push();
+      b.noStroke();
       b.fill(palettes[palette][0], 90, 90, 0.8);
       b.circle(0, 0, star_size_px);
+      b.pop();
     }
   }
 
