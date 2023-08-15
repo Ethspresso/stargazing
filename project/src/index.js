@@ -137,9 +137,6 @@ let sketch = function (p5) {
 
     // Parse URL params
     const sp = new URLSearchParams(window.location.search);
-    for (val of sp.values()) {
-      console.log(val);
-    }
 
     // Reduce the size a tiny bit to avoid scrollbars
     width = window.innerWidth * 0.99;
@@ -338,10 +335,12 @@ let sketch = function (p5) {
     p5.background('black');
     p5.textFont('Verdana');
     p5.textAlign(p5.CENTER);
-    p5.textSize(Math.floor(48*(window.innerHeight/1000)));
+    p5.textSize(Math.floor(48*window.innerHeight/1000));
     p5.fill('white');
     p5.stroke('white');
-    p5.text('Drawing... ' + amount + '%', innerWidth/2, innerHeight/2);
+    p5.text('Stargazing by Ethspresso', innerWidth/2, innerHeight/2);
+    p5.textSize(Math.floor(32*window.innerHeight/1000));
+    p5.text(amount + '%', innerWidth/2, innerHeight/2 + Math.floor(64*window.innerHeight/1000))
   }
 
   // function to save an output with the unique hash as the filename,
