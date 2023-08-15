@@ -271,7 +271,7 @@ let sketch = function (p5) {
         b.point(x + off, y + off);
         point_count++;
       }
-      b.rotate(360 / star_repeat)
+      b.rotate(360 / star_repeat);
     }
     b.pop();
   }
