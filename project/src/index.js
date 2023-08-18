@@ -12,6 +12,7 @@ let palette;
 let palettes;
 let point_count;
 let early_stop;
+let debug = true;
 
 // Star options
 let star;
@@ -112,6 +113,7 @@ let sketch = function (p5) {
       (star_repeat === 256 && star_ray_len >= 0.15)) {
       star_size = 'Medium';
     }
+    if (debug) console.log('Drawing', star_point_count, 'points for the', star_size, 'star and', arc_point_count, 'points for the', arc_density, 'density beams');
 
     // Lower value of end_x_off causes more angled lines
     end_x_off = p5.map(fxrand(), 0, 1, -3, 5);
@@ -156,12 +158,12 @@ let sketch = function (p5) {
     width = window.innerWidth * 0.99;
     height = window.innerHeight * 0.99;
     p5.createCanvas(width, height);
-    console.log('Rendering at', width, 'x', height);
+    console.log('Rendering at', width, 'x', height, 'px');
     p5.pixelDensity(1);
 
     // Create a buffer to draw everything to
     buffer = p5.createGraphics(buffer_width, buffer_height, p5.WEBGL);
-    console.log('Created buffer at', buffer.width, 'x', buffer.height);
+    if (debug) console.log('Created buffer at', buffer.width, 'x', buffer.height, 'px');
     buffer.pixelDensity(1);
 
     buffer.colorMode(p5.HSB, 360, 100, 100, 1.0);
@@ -309,7 +311,8 @@ let sketch = function (p5) {
 
   p5.draw = function () {
     let progress = Math.round(p5.map(p5.frameCount, 1, max_star_iter, 10, 100));
-    show_progress(progress);
+    if (debug) show_buffer(buffer);
+    else show_progress(progress);
 
     if (star) draw_star(buffer, p5.frameCount);
     if (p5.frameCount > max_star_iter) {
