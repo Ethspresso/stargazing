@@ -12,7 +12,7 @@ let palette;
 let palettes;
 let point_count;
 let early_stop;
-let debug = true;
+let debug = false;
 
 // Star options
 let star;
@@ -116,7 +116,6 @@ let sketch = function (p5) {
       (star_repeat === 256 && star_ray_len >= 0.15)) {
       star_size = 'Medium';
     }
-    if (debug) console.log('Drawing', star_point_count, 'points for the', star_size, 'star and', arc_point_count, 'points for the', arc_density, 'density beams');
 
     // Lower value of end_x_off causes more angled lines
     end_x_off = p5.map(fxrand(), 0, 1, -3, 5);
@@ -256,6 +255,7 @@ let sketch = function (p5) {
       if (early_stop) break;
     }
     b.pop();
+    if (debug) console.log('Beam iter', iter, 'done, drew', point_count-start_count, 'points from start_t', start_t, 'to end_t', end_t);
   }
 
   function draw_star(b, iter) {
@@ -292,6 +292,7 @@ let sketch = function (p5) {
       b.rotate(360 / star_repeat);
     }
     b.pop();
+    if (debug) console.log('Star iter', iter, 'done, drew', point_count-start_count, 'points from start_t', start_t, 'to end_t', end_t);
   }
 
   function draw_star_body(b) {
@@ -310,6 +311,7 @@ let sketch = function (p5) {
   }
 
   p5.draw = function () {
+    // 100% progress is when the star is done
     let progress = Math.round(p5.map(p5.frameCount, 1, max_star_iter, 10, 100));
     if (debug) show_buffer(buffer);
     else show_progress(progress);
@@ -328,6 +330,7 @@ let sketch = function (p5) {
 
       const execution_time = Date.now() - start;
       console.log(`Total execution time: ${execution_time / 1000} seconds`);
+      if (debug) console.log('Drew', point_count, 'points in total');
     }
   }
 
