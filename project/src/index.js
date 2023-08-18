@@ -81,7 +81,7 @@ let sketch = function (p5) {
     // Determine buffer dimentions early, to use that for point count calculations
     buffer_width = 2560;
     if (requested_width) buffer_width = requested_width;
-    fullscreen_ratio = 9/16;
+    fullscreen_ratio = 10/16;
     buffer_height = Math.floor(buffer_width*fullscreen_ratio);
 
     // Determine beam features
@@ -91,14 +91,17 @@ let sketch = function (p5) {
     let arc_point_count_max = 16000 * (buffer_width/1000);
     arc_point_count = Math.floor(p5.map(fxrand(), 0, 1, arc_point_count_min, arc_point_count_max));
     max_point_amplitude = buffer_width / 60;
+    let arc_density = arc_point_count/arc_point_count_max <= 0.3 ? 'Light' : arc_point_count/arc_point_count_max <= 0.6 ? 'Medium' : 'Dense';
 
     // Determine star features
-    star = fxrand() < 0.8 ? true : false;
+    star = fxrand() < 0.9 ? true : false;
     let star_repeat_opts = [256, 512, 1024];
     star_repeat = star_repeat_opts[Math.floor(fxrand() * star_repeat_opts.length)];
     let star_ray_len_opts = [0, 0.05, 0.1, 0.15, 0.2, 0.25];
     star_ray_len = star_ray_len_opts[Math.floor(fxrand() * star_ray_len_opts.length)];
-    star_point_count = p5.map(star_ray_len, 0, 0.25, 1280, 10240);
+    let star_point_count_min = 600 * (buffer_width/1000);
+    let star_point_count_max = 6000 * (buffer_width/1000);
+    star_point_count = p5.map(star_ray_len, 0, 0.25, star_point_count_min, star_point_count_max);
 
     // Determine star size
     let star_size = 'Small';
@@ -150,13 +153,13 @@ let sketch = function (p5) {
       'Star size': star ? star_size : 'No star',
       'Pitch angle': twistyness,
       'Beam count': arc_count,
-      'Beam density': arc_point_count/arc_point_count_max <= 0.3 ? 'Light' : arc_point_count/arc_point_count_max <= 0.6 ? 'Medium' : 'Dense',
+      'Beam density': arc_density,
     }
     $fx.features(features);
 
     // Reduce the size a tiny bit to avoid scrollbars
-    width = window.innerWidth * 0.99;
-    height = window.innerHeight * 0.99;
+    width = Math.floor(window.innerWidth * 0.995);
+    height = Math.floor(window.innerHeight * 0.995);
     p5.createCanvas(width, height);
     console.log('Rendering at', width, 'x', height, 'px');
     p5.pixelDensity(1);
@@ -257,16 +260,13 @@ let sketch = function (p5) {
 
   function draw_star(b, iter) {
     if (iter > max_star_iter) return;
-
-    b.noFill();
-    b.strokeWeight(2);
-
     let hue = palettes[palette][0];
-
-    b.push();
     let start_t;
     let end_t;
 
+    b.push();
+    b.noFill();
+    b.strokeWeight(2);
     for (let i = 0; i < star_repeat; i++) {
       // Make length vary a bit
       let len = b.width * 0.2 + p5.map(fxrand(), 0, 1, -b.width * 0.05, b.width * star_ray_len);
@@ -335,10 +335,7 @@ let sketch = function (p5) {
   function show_buffer(b) {
     p5.push();
     p5.background('black');
-    // Center the image on screen
-    let x = 0;
-    let y = (height - width*fullscreen_ratio)/2;
-    p5.image(b, x, y, width, width*fullscreen_ratio);
+    p5.image(b, 0, 0, width, height, 0, 0, b.width, b.height, p5.CONTAIN);
     p5.pop();
   }
 
