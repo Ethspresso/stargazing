@@ -50,8 +50,8 @@ let sketch = function (p5) {
       'The core': [15, 30],
       'Burning': [30, 45],
       'Summer in space': [45, 45],
-      'The vast universe': [215, 45],
-      'Expanding': [215, 30],
+      'The vast universe': [210, 45],
+      'Expanding': [210, 30],
       'Neptune': [240, 45],
       'Shining bright': [240, 15],
       'Gold': [240, 30],
@@ -59,6 +59,16 @@ let sketch = function (p5) {
       'Nebula': [300, 30],
       'Forever and ever': [330, 45],
       'Is it real': [330, 30],
+    }
+    palettes = {
+      '105': [105, 5],
+      '135': [135, 45],
+      '225': [225, 45],
+      '255': [255, 45],
+      '270': [270, 45],
+      '285': [285, 45],
+      '315': [315, 45],
+      '345': [345, 45],
     }
     let paletteNames = Object.keys(palettes);
     palette = paletteNames[Math.floor(fxrand() * paletteNames.length)];
