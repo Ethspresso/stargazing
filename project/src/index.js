@@ -85,10 +85,10 @@ let sketch = function (p5) {
     // Determine beam features
     let arc_counts = [4, 4, 8, 16, 24, 32, 32, 48, 64, 64, 128, 128];
     arc_count = arc_counts[Math.floor(fxrand() * arc_counts.length)];
-    let arc_point_count_min = 4000 * (buffer_width/1000);
+    let arc_point_count_min = 6000 * (buffer_width/1000);
     let arc_point_count_max = 16000 * (buffer_width/1000);
     arc_point_count = Math.floor(p5.map(fxrand(), 0, 1, arc_point_count_min, arc_point_count_max));
-    max_point_amplitude = buffer_width / 60;
+    max_point_amplitude = buffer_width / 80;
     let arc_density = arc_point_count/arc_point_count_max <= 0.3 ? 'Light' : arc_point_count/arc_point_count_max <= 0.6 ? 'Medium' : 'Dense';
 
     // Determine star features
@@ -219,15 +219,15 @@ let sketch = function (p5) {
     b.strokeWeight(2);
 
     let hue = palettes[palette][1];
-
+    let start_count = point_count;
     let batch_size = arc_point_count / max_arch_iter;
+    let len = b.width * 0.5;
 
     // Draw a portion of the arcs, determined by 'iter' argument
     let start_t = ((iter - 1) * batch_size) / arc_point_count;
     let end_t = iter * batch_size / arc_point_count;
 
     b.push();
-    let len = b.width * 0.5;
     for (let i = 0; i < arc_count; i++) {
       for (let t = start_t; t < end_t; t += 1 / arc_point_count) {
         let x = b.bezierPoint(-len * start_off, len, len, len * end_x_off, t);
@@ -262,6 +262,14 @@ let sketch = function (p5) {
     let start_t;
     let end_t;
 
+    let start_count = point_count;
+
+    // Draw a portion determined by 'iter' argument
+    end_t = p5.map(iter, 0, max_star_iter, 0, 1);
+    start_t = Math.max(0, end_t - 1/max_star_iter);
+    // Scale point count by iter, to avoid drawing thousands of points on top of each other in the very center
+    let iter_point_count = star_point_count * p5.map(iter, 0, max_star_iter, 0.01, 1);
+
     b.push();
     b.noFill();
     b.strokeWeight(2);
@@ -269,11 +277,7 @@ let sketch = function (p5) {
       // Make length vary a bit
       let len = b.width * 0.2 + p5.map(fxrand(), 0, 1, -b.width * 0.05, b.width * star_ray_len);
 
-      // Draw a portion determined by 'iter' argument
-      end_t = p5.map(iter, 0, max_star_iter, 0, 1);
-      start_t = Math.max(0, end_t - 1/max_star_iter);
-
-      for (let t = start_t; t < end_t; t += 1 / star_point_count) {
+      for (let t = start_t; t < end_t; t += 1 / iter_point_count) {
         let x = b.bezierPoint(start_off, 0, 0, len, t);
         let y = b.bezierPoint(start_off, 0, 0, len, t);
 
