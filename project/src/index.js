@@ -78,7 +78,9 @@ let sketch = function (p5) {
     // Parse URL params
     const sp = new URLSearchParams(window.location.search);
     const requested_width = sp.get("w");
+    const enable_debug = sp.get("debug");
     if (requested_width) console.log('Requested rendering width is', requested_width, 'px');
+    if (enable_debug) debug = true;
     // Determine buffer dimentions early, to use that for point count calculations
     buffer_width = 2560;
     if (requested_width) buffer_width = requested_width;
