@@ -342,7 +342,7 @@ let sketch = function (p5) {
 
       const execution_time = Date.now() - start;
       console.log(`Total execution time: ${execution_time / 1000} seconds`);
-      if (debug) console.log('Drew', point_count, 'points in total');
+      console.log('Drew', point_count, 'points in total');
     }
   }
 
