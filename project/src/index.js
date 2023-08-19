@@ -33,6 +33,8 @@ let end_y_off;
 let max_arch_iter;
 let max_point_amplitude;
 let twistyness;
+let scattered_arcs;
+let scatter_factor;
 
 let sketch = function (p5) {
 
@@ -90,6 +92,9 @@ let sketch = function (p5) {
     arc_point_count = Math.floor(p5.map(fxrand(), 0, 1, arc_point_count_min, arc_point_count_max));
     max_point_amplitude = buffer_width / 80;
     let arc_density = arc_point_count/arc_point_count_max <= 0.3 ? 'Light' : arc_point_count/arc_point_count_max <= 0.6 ? 'Medium' : 'Dense';
+    scattered_arcs = fxrand() <= 0.7 ? false : true;
+    let scatter_factor_r = fxrand();
+    scatter_factor = scatter_factor_r < 0.33 ? 2 : scatter_factor_r < 0.67 ? 3 : 4;
 
     // Determine star features
     star = fxrand() < 0.9 ? true : false;
@@ -151,6 +156,7 @@ let sketch = function (p5) {
       'Pitch angle': twistyness,
       'Beam count': arc_count,
       'Beam density': arc_density,
+      'Scattered': scattered_arcs,
     }
     $fx.features(features);
 
@@ -215,8 +221,7 @@ let sketch = function (p5) {
   }
 
   function draw_arcs(b, iter) {
-    b.noFill();
-    b.strokeWeight(2);
+    if (scattered_arcs && iter % scatter_factor == 0) return;
 
     let hue = palettes[palette][1];
     let start_count = point_count;
@@ -228,6 +233,8 @@ let sketch = function (p5) {
     let end_t = iter * batch_size / arc_point_count;
 
     b.push();
+    b.noFill();
+    b.strokeWeight(2);
     for (let i = 0; i < arc_count; i++) {
       for (let t = start_t; t < end_t; t += 1 / arc_point_count) {
         let x = b.bezierPoint(-len * start_off, len, len, len * end_x_off, t);
