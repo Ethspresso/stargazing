@@ -1,5 +1,7 @@
 import p5 from 'p5';
 
+let debug = false;
+
 // General options
 let start;
 let width;
@@ -12,7 +14,6 @@ let palette;
 let palettes;
 let point_count;
 let early_stop;
-let debug = false;
 
 // Star options
 let star;
