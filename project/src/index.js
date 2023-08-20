@@ -48,29 +48,27 @@ let sketch = function (p5) {
 
     // You know, the colours
     palettes = {
-      'Red dwarf': [0, 45],
-      'Orange dwarf': [0, 30],
-      'Into the matrix': [15, 45],
-      'The core': [15, 30],
+      'Red Dwarf': [0, 45],
+      'Orange Dwarf': [0, 30],
+      'Into the Matrix': [15, 45],
+      'The Core': [15, 30],
       'Burning': [30, 45],
-      'Summer in space': [45, 45],
-      'The vast universe': [210, 45],
+      'Summer in Space': [45, 45],
+      'The Vast Universe': [210, 45],
       'Expanding': [210, 30],
       'Neptune': [240, 45],
-      'Shining bright': [240, 15],
+      'Shining Bright': [240, 15],
       'Gold': [240, 30],
-      'Wild and furious': [300, 45],
+      'Wild and Furious': [300, 45],
       'Nebula': [300, 30],
-      'Forever and ever': [330, 45],
-      'Is it real': [330, 30],
-    }
-    palettes = {
-      '225': [225, 45],
-      '255': [255, 45],
-      '270': [270, 45],
-      '285': [285, 45],
-      '315': [315, 45],
-      '345': [345, 45],
+      'Forever and Ever': [330, 45],
+      'Is It Real': [330, 30],
+      'Blue Wave': [225, 45],
+      'Heavenly Iris': [255, 45],
+      'Indigo Summer': [270, 45],
+      'Misty Karma': [285, 45],
+      'Farout': [315, 45],
+      'Gioiello': [345, 45],
     }
     let paletteNames = Object.keys(palettes);
     palette = paletteNames[Math.floor(fxrand() * paletteNames.length)];
