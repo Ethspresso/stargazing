@@ -3,7 +3,8 @@ import p5 from 'p5';
 let debug = false;
 
 // General options
-let start;
+let start_time;
+let execution_time = false;
 let width;
 let height;
 let buffer;
@@ -40,7 +41,7 @@ let scatter_factor;
 let sketch = function (p5) {
 
   p5.setup = function () {
-    start = Date.now();
+    start_time = Date.now();
     max_arch_iter = 90;
     max_star_iter = 60;
     point_count = 0;
@@ -222,6 +223,7 @@ let sketch = function (p5) {
   }
 
   function draw_arcs(b, iter) {
+    if (early_stop) return;
     if (scattered_arcs && iter % scatter_factor == 0) return;
 
     let hue = palettes[palette][1];
@@ -321,6 +323,9 @@ let sketch = function (p5) {
   }
 
   p5.draw = function () {
+    // Early exit if we get called due to resizing after drawing everything
+    if (execution_time) return;
+
     // 100% progress is when the star is done
     let progress = Math.round(p5.map(p5.frameCount, 1, max_star_iter, 10, 100));
     if (debug) show_buffer(buffer);
@@ -338,7 +343,7 @@ let sketch = function (p5) {
       p5.noLoop();
       fxpreview();
 
-      const execution_time = Date.now() - start;
+      execution_time = Date.now() - start_time;
       console.log(`Total execution time: ${execution_time / 1000} seconds`);
       console.log('Drew', point_count, 'points in total');
     }
