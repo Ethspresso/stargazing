@@ -8,6 +8,7 @@ let execution_time = false;
 let width;
 let height;
 let buffer;
+let buffer2;
 let buffer_width;
 let buffer_height;
 let fullscreen_ratio;
@@ -162,23 +163,27 @@ let sketch = function (p5) {
     }
     $fx.features(features);
 
-    // Reduce the size a tiny bit to avoid scrollbars
-    width = Math.floor(window.innerWidth * 0.995);
-    height = Math.floor(window.innerHeight * 0.995);
+    width = Math.floor(window.innerWidth);
+    height = Math.floor(window.innerHeight);
     p5.createCanvas(width, height);
-    console.log('Rendering at', width, 'x', height, 'px');
     p5.pixelDensity(1);
+    console.log('Rendering at', width, 'x', height, 'px');
 
     // Create a buffer to draw everything to
     buffer = p5.createGraphics(buffer_width, buffer_height, p5.WEBGL);
+    buffer2 = p5.createGraphics(buffer_width, buffer_height, p5.WEBGL);
     if (debug) console.log('Created buffer at', buffer.width, 'x', buffer.height, 'px');
     buffer.pixelDensity(1);
+    buffer2.pixelDensity(1);
 
     buffer.colorMode(p5.HSB, 360, 100, 100, 1.0);
+    buffer2.colorMode(p5.HSB, 360, 100, 100, 1.0);
     buffer.setAttributes('antialias', true);
+    buffer2.setAttributes('antialias', true);
     p5.frameRate(60);
     // This helps with rotation logic
     buffer.angleMode(p5.DEGREES);
+    buffer2.angleMode(p5.DEGREES);
 
     // Iteration details to console
     for (const key in features) {
@@ -186,7 +191,6 @@ let sketch = function (p5) {
         console.log(key, ': ', features[key]);
       }
     }
-    show_progress(1);
     draw_bg(buffer);
     show_progress(5);
     draw_star_body(buffer);
@@ -269,16 +273,10 @@ let sketch = function (p5) {
   function draw_star(b, iter) {
     if (iter > max_star_iter) return;
     let hue = palettes[palette][0];
-    let start_t;
-    let end_t;
-
-    let start_count = point_count;
 
     // Draw a portion determined by 'iter' argument
-    end_t = p5.map(iter, 0, max_star_iter, 0, 1);
-    start_t = Math.max(0, end_t - 1/max_star_iter);
-    // Scale point count by iter, to avoid drawing thousands of points on top of each other in the very center
-    let iter_point_count = star_point_count * p5.map(iter, 0, max_star_iter, 0.01, 1);
+    let end_t = p5.map(iter, 0, max_star_iter, 0, 1);
+    let start_t = Math.max(0, end_t - 1/max_star_iter);
 
     b.push();
     b.noFill();
@@ -287,24 +285,19 @@ let sketch = function (p5) {
       // Make length vary a bit
       let len = b.width * 0.2 + p5.map(fxrand(), 0, 1, -b.width * 0.05, b.width * star_ray_len);
 
-      for (let t = start_t; t < end_t; t += 1 / iter_point_count) {
-        let x = b.bezierPoint(start_off, 0, 0, len, t);
-        let y = b.bezierPoint(start_off, 0, 0, len, t);
+      // Calculate start and end
+      let x1 = b.bezierPoint(start_off, 0, 0, len, start_t);
+      let y1 = b.bezierPoint(start_off, 0, 0, len, start_t);
+      let x2 = b.bezierPoint(start_off, 0, 0, len, end_t);
+      let y2 = b.bezierPoint(start_off, 0, 0, len, end_t);
 
-        // Fade colors based on distance to center
-        let fade = p5.map(b.dist(0, 0, x, y), 0, b.width / 2, 1, 0.4);
-        b.stroke(hue, 90, 90 * fade, 0.6);
-
-        // Perturb the location a bit, based on distance to center
-        let amplitude = 1.2 * p5.map(p5.dist(0, 0, x, y), 0, b.width * 1.1, 2, 8);
-        let off = amplitude * p5.map(fxrand(), 0, 1, -1, 1);
-        b.point(x + off, y + off);
-        point_count++;
-      }
+      // Fade colors based on distance to center
+      let fade = p5.map(b.dist(0, 0, x2, y2), 0, b.width / 2, 1, 0.4);
+      b.stroke(hue, 90, 90 * fade, 0.6);
+      b.line(x1, y1, x2, y2);
       b.rotate(360 / star_repeat);
     }
     b.pop();
-    if (debug) console.log('Star iter', iter, 'done, drew', point_count-start_count, 'points from start_t', start_t, 'to end_t', end_t);
   }
 
   function draw_star_body(b) {
@@ -328,18 +321,18 @@ let sketch = function (p5) {
 
     // 100% progress is when the star is done
     let progress = Math.round(p5.map(p5.frameCount, 1, max_star_iter, 10, 100));
-    if (debug) show_buffer(buffer);
+    if (debug) show_buffer(buffer, buffer2, width, height);
     else show_progress(progress);
 
     if (star) draw_star(buffer, p5.frameCount);
     if (p5.frameCount > max_star_iter) {
-      draw_arcs(buffer, p5.frameCount - max_star_iter);
-      show_buffer(buffer);
+      draw_arcs(buffer2, p5.frameCount - max_star_iter);
+      show_buffer(buffer, buffer2, width, height);
     }
 
     if (p5.frameCount >= (max_arch_iter+max_star_iter) || early_stop) {
       // end animation and call fxpreview
-      show_buffer(buffer);
+      show_buffer(buffer, buffer2, width, height);
       p5.noLoop();
       fxpreview();
 
@@ -350,10 +343,11 @@ let sketch = function (p5) {
   }
 
   // Show the buffer on screen
-  function show_buffer(b) {
+  function show_buffer(b1, b2, w, h) {
     p5.push();
     p5.background('black');
-    p5.image(b, 0, 0, width, height, 0, 0, b.width, b.height, p5.CONTAIN);
+    p5.image(b1, 0, 0, w, h, 0, 0, b1.width, b1.height, p5.CONTAIN);
+    p5.image(b2, 0, 0, w, h, 0, 0, b2.width, b2.height, p5.CONTAIN);
     p5.pop();
   }
 
@@ -369,23 +363,28 @@ let sketch = function (p5) {
     p5.text(amount + '%', innerWidth/2, innerHeight/2 + Math.floor(64*window.innerHeight/1000))
   }
 
-  // function to save an output with the unique hash as the filename,
-  // when the user presses 's' (upper or lower-case)
+  // Save output in dimentions of buffer with the unique hash as the filename,
+  // when the user presses 's' or 'S'
   p5.keyTyped = function (e) {
     const keyS = 83;
     const keys = 115;
     if (e.keyCode === keyS || e.keyCode === keys) {
-      p5.saveCanvas(buffer, fxhash + '_' + buffer.width + 'x' + buffer.height, 'jpg')
+      p5.resizeCanvas(buffer.width, buffer.height, false);
+      show_buffer(buffer, buffer2, buffer.width, buffer.height);
+      p5.saveCanvas(fxhash + '_' + buffer.width + 'x' + buffer.height, 'jpg')
+      p5.resizeCanvas(width, height, false);
+      show_buffer(buffer, buffer2, width, height);
     }
-    return false; // prevent any unwanted default browser behaviour
+    // prevent any unwanted default browser behaviour
+    return false;
   }
 
   p5.windowResized = function () {
     width = Math.floor(window.innerWidth);
     height = Math.floor(window.innerHeight);
-    p5.resizeCanvas(width, height);
+    p5.resizeCanvas(width, height, false);
     console.log('Resized to', width, 'x', height);
-    show_buffer(buffer);
+    show_buffer(buffer, buffer2, width, height);
   }
 }
 
