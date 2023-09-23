@@ -43,7 +43,7 @@ let sketch = function (p5) {
 
   p5.setup = function () {
     start_time = Date.now();
-    max_arch_iter = 90;
+    max_arch_iter = 180;
     max_star_iter = 60;
     point_count = 0;
     early_stop = false;
@@ -88,7 +88,7 @@ let sketch = function (p5) {
     buffer_height = Math.floor(buffer_width*fullscreen_ratio);
 
     // Determine beam features
-    let arc_counts = [4, 4, 8, 16, 24, 32, 32, 48, 64, 64, 128, 128];
+    let arc_counts = [4, 8, 16, 24, 32, 32, 48, 48, 64, 64, 128, 128];
     arc_count = arc_counts[Math.floor(fxrand() * arc_counts.length)];
     let arc_point_count_min = 6000 * (buffer_width/1000);
     let arc_point_count_max = 16000 * (buffer_width/1000);
@@ -100,7 +100,7 @@ let sketch = function (p5) {
     scatter_factor = scatter_factor_r < 0.33 ? 2 : scatter_factor_r < 0.67 ? 3 : 4;
 
     // Determine star features
-    star = fxrand() < 0.9 ? true : false;
+    star = fxrand() < 0.95 ? true : false;
     let star_repeat_opts = [256, 512, 1024];
     star_repeat = star_repeat_opts[Math.floor(fxrand() * star_repeat_opts.length)];
     let star_ray_len_opts = [0, 0.05, 0.1, 0.15, 0.2, 0.25];
