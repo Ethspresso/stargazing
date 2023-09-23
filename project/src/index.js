@@ -363,17 +363,18 @@ let sketch = function (p5) {
     p5.text(amount + '%', innerWidth/2, innerHeight/2 + Math.floor(64*window.innerHeight/1000))
   }
 
-  // Save output in dimentions of buffer with the unique hash as the filename,
-  // when the user presses 's' or 'S'
+  function save_output() {
+    p5.resizeCanvas(buffer.width, buffer.height, false);
+    show_buffer(buffer, buffer2, buffer.width, buffer.height);
+    p5.saveCanvas('Stargazing_' + palette + '_' + fxhash + '_' + buffer.width + 'x' + buffer.height, 'jpg')
+    p5.resizeCanvas(width, height, false);
+    show_buffer(buffer, buffer2, width, height);
+  }
+
   p5.keyTyped = function (e) {
-    const keyS = 83;
-    const keys = 115;
-    if (e.keyCode === keyS || e.keyCode === keys) {
-      p5.resizeCanvas(buffer.width, buffer.height, false);
-      show_buffer(buffer, buffer2, buffer.width, buffer.height);
-      p5.saveCanvas(fxhash + '_' + buffer.width + 'x' + buffer.height, 'jpg')
-      p5.resizeCanvas(width, height, false);
-      show_buffer(buffer, buffer2, width, height);
+    // Save output when the user presses 's' or 'S'
+    if (e.keyCode === 83 || e.keyCode === 115) {
+      save_output();
     }
     // prevent any unwanted default browser behaviour
     return false;
