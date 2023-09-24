@@ -43,7 +43,7 @@ let sketch = function (p5) {
 
   p5.setup = function () {
     start_time = Date.now();
-    max_arch_iter = 180;
+    max_arch_iter = 300;
     max_star_iter = 60;
     point_count = 0;
     early_stop = false;
