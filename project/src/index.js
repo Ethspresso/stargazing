@@ -366,7 +366,7 @@ let sketch = function (p5) {
   function save_output() {
     p5.resizeCanvas(buffer.width, buffer.height, false);
     show_buffer(buffer, buffer2, buffer.width, buffer.height);
-    p5.saveCanvas('Stargazing_' + palette + '_' + fxhash + '_' + buffer.width + 'x' + buffer.height, 'jpg')
+    p5.saveCanvas('Stargazing_' + palette + '_' + arc_count + '_' + fxhash + '_' + buffer.width + 'x' + buffer.height, 'jpg')
     p5.resizeCanvas(width, height, false);
     show_buffer(buffer, buffer2, width, height);
   }
