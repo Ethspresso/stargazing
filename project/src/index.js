@@ -78,13 +78,19 @@ let sketch = function (p5) {
     // Parse URL params
     const sp = new URLSearchParams(window.location.search);
     const requested_width = sp.get("w");
+    let pixel_density = sp.get("pd");
+    fullscreen_ratio = sp.get("ratio");
     const enable_debug = sp.get("debug");
     if (requested_width) console.log('Requested rendering width is', requested_width, 'px');
+    if (pixel_density) console.log('Requested pixeldensity is', pixel_density);
+    else pixel_density = 1;
+    // Use requested aspect ratio, default to square
+    if (fullscreen_ratio) console.log('Requested aspect ratio is', fullscreen_ratio);
+    else fullscreen_ratio = 1;
     if (enable_debug) debug = true;
     // Determine buffer dimentions early, to use that for point count calculations
     buffer_width = 2560;
     if (requested_width) buffer_width = requested_width;
-    fullscreen_ratio = 10/16;
     buffer_height = Math.floor(buffer_width*fullscreen_ratio);
 
     // Determine beam features
@@ -166,15 +172,15 @@ let sketch = function (p5) {
     width = Math.floor(window.innerWidth);
     height = Math.floor(window.innerHeight);
     p5.createCanvas(width, height);
-    p5.pixelDensity(1);
-    console.log('Rendering at', width, 'x', height, 'px');
+    p5.pixelDensity(pixel_density);
+    console.log('Rendering at', width, 'x', height, 'px with pixeldensity', pixel_density);
 
     // Create a buffer to draw everything to
     buffer = p5.createGraphics(buffer_width, buffer_height, p5.WEBGL);
     buffer2 = p5.createGraphics(buffer_width, buffer_height, p5.WEBGL);
     if (debug) console.log('Created buffer at', buffer.width, 'x', buffer.height, 'px');
-    buffer.pixelDensity(1);
-    buffer2.pixelDensity(1);
+    buffer.pixelDensity(pixel_density);
+    buffer2.pixelDensity(pixel_density);
 
     buffer.colorMode(p5.HSB, 360, 100, 100, 1.0);
     buffer2.colorMode(p5.HSB, 360, 100, 100, 1.0);
