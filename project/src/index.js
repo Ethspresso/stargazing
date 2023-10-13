@@ -86,10 +86,10 @@ let sketch = function (p5) {
     else pixel_density = 1;
     // Use requested aspect ratio, default to square
     if (fullscreen_ratio) console.log('Requested aspect ratio is', fullscreen_ratio);
-    else fullscreen_ratio = 1;
+    else fullscreen_ratio = 10/16;
     if (enable_debug) debug = true;
     // Determine buffer dimentions early, to use that for point count calculations
-    buffer_width = 2560;
+    buffer_width = 1200;
     if (requested_width) buffer_width = requested_width;
     buffer_height = Math.floor(buffer_width*fullscreen_ratio);
 
