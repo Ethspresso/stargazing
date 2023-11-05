@@ -165,7 +165,7 @@ let sketch = function (p5) {
       'Pitch angle': twistyness,
       'Beam count': arc_count,
       'Beam density': arc_density,
-      'Scattered': scattered_arcs,
+      'Scattered': scattered_arcs ? "Yes" : "No",
     }
     $fx.features(features);
 
