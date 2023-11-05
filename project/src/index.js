@@ -178,7 +178,7 @@ let sketch = function (p5) {
     // Create a buffer to draw everything to
     buffer = p5.createGraphics(buffer_width, buffer_height, p5.WEBGL);
     buffer2 = p5.createGraphics(buffer_width, buffer_height, p5.WEBGL);
-    if (debug) console.log('Created buffer at', buffer.width, 'x', buffer.height, 'px');
+    console.log('Created buffer at', buffer.width, 'x', buffer.height, 'px');
     buffer.pixelDensity(pixel_density);
     buffer2.pixelDensity(pixel_density);
 
