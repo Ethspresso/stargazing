@@ -348,8 +348,9 @@ let sketch = function (p5) {
     }
   }
 
-  // Show the buffer on screen
+  // Render buffers on visible canvas
   function show_buffer(b1, b2, w, h) {
+    // w, h = width, height of current browser window
     p5.push();
     p5.background('black');
     p5.image(b1, 0, 0, w, h, 0, 0, b1.width, b1.height, p5.CONTAIN);
@@ -361,7 +362,7 @@ let sketch = function (p5) {
     p5.background('black');
     p5.textFont('Verdana');
     p5.textAlign(p5.CENTER);
-    p5.textSize(Math.floor(48*window.innerHeight/1000));
+    p5.textSize(Math.floor(42*window.innerHeight/1000));
     p5.fill('white');
     p5.stroke('white');
     p5.text('Stargazing by Ethspresso', innerWidth/2, innerHeight/2);
