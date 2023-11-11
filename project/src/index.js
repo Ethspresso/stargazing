@@ -5,12 +5,14 @@ let debug = false;
 // General options
 let start_time;
 let execution_time = false;
+let sp;
 let width;
 let height;
 let buffer;
 let buffer2;
 let buffer_width;
 let buffer_height;
+let default_width;
 let fullscreen_ratio;
 let palette;
 let palettes;
@@ -76,7 +78,7 @@ let sketch = function (p5) {
     palette = paletteNames[Math.floor(fxrand() * paletteNames.length)];
 
     // Parse URL params
-    const sp = new URLSearchParams(window.location.search);
+    sp = new URLSearchParams(window.location.search);
     const requested_width = sp.get("w");
     let pixel_density = sp.get("pd");
     fullscreen_ratio = sp.get("ratio");
@@ -89,8 +91,8 @@ let sketch = function (p5) {
     else fullscreen_ratio = 10/16;
     if (enable_debug) debug = true;
     // Determine buffer dimentions early, to use that for point count calculations
-    buffer_width = 1200;
-    if (requested_width) buffer_width = requested_width;
+    default_width = 1200;
+    buffer_width = requested_width ? requested_width : default_width;
     buffer_height = Math.floor(buffer_width*fullscreen_ratio);
 
     // Determine beam features
@@ -379,9 +381,27 @@ let sketch = function (p5) {
   }
 
   p5.keyTyped = function (e) {
-    // Save output when the user presses 's' or 'S'
     if (e.keyCode === 83 || e.keyCode === 115) {
+      // Save output when the user presses 's' or 'S'
       save_output();
+    } else if (e.keyCode === 49) {
+      // Render at default size
+      console.log('Rendering at default size', e.keyCode);
+      sp.set('w', default_width);
+      // Reload
+      window.location.href = `${window.location.pathname}?${sp.toString()}`;
+    } else if (e.keyCode === 50) {
+      // Render bigger
+      console.log('Rendering at 2560x1600', e.keyCode);
+      sp.set('w', 2560);
+      // Reload
+      window.location.href = `${window.location.pathname}?${sp.toString()}`;
+    } else if (e.keyCode === 51) {
+      // Render even bigger
+      console.log('Rendering at 5120x3200', e.keyCode);
+      sp.set('w', 5120);
+      // Reload
+      window.location.href = `${window.location.pathname}?${sp.toString()}`;
     }
     // prevent any unwanted default browser behaviour
     return false;
