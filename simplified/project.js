@@ -15,6 +15,7 @@ let palette;
 let palettes;
 let point_count;
 let early_stop;
+let tap_ts;
 
 // Star options
 let star;
@@ -44,6 +45,7 @@ function setup() {
   max_star_iter = 60;
   point_count = 0;
   early_stop = false;
+  tap_ts = 0;
 
   // You know, the colours
   palettes = {
@@ -416,6 +418,18 @@ keyTyped = function (e) {
   // Prevent any unwanted default browser behaviour
   return false;
 }
+
+// Save output when double tap is detected (intended for mobile)
+document.addEventListener('touchstart', function (event) {
+  let current_ts = new Date().getTime();
+  let tap_diff = current_ts - tap_ts;
+  if (tap_diff < 2500 && tap_diff > 0) {
+    // Double tap detected
+    save_output();
+    event.preventDefault();
+  }
+  tap_ts = current_ts;
+});
 
 windowResized = function () {
   width = Math.floor(window.innerWidth);
