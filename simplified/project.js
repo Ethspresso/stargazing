@@ -370,12 +370,13 @@ function show_progress(amount) {
 function save_output() {
   resizeCanvas(buffer.width, buffer.height, false);
   show_buffer(buffer, buffer2, buffer.width, buffer.height);
-  saveCanvas('Stargazing_' + palette + '_' + arc_count + '_' + $fx.hash + '_' + buffer.width + 'x' + buffer.height, 'jpg')
+  saveCanvas('Stargazing_' + palette + '_' + $fx.hash + '_' + buffer.width + 'x' + buffer.height, 'jpg')
   resizeCanvas(width, height, false);
   show_buffer(buffer, buffer2, width, height);
 }
 
 keyTyped = function (e) {
+  // Determine key pressed, apply change and in most cases reload window
   if (e.keyCode === 83 || e.keyCode === 115) {
     // Save output when the user presses 's' or 'S'
     save_output();
@@ -383,22 +384,19 @@ keyTyped = function (e) {
     // Render at default size
     console.log('Rendering at default size', e.keyCode);
     sp.set('w', default_width);
-    // Reload
     window.location.href = `${window.location.pathname}?${sp.toString()}`;
   } else if (e.keyCode === 50) {
     // Render bigger
     console.log('Rendering at 2560x1600', e.keyCode);
     sp.set('w', 2560);
-    // Reload
     window.location.href = `${window.location.pathname}?${sp.toString()}`;
   } else if (e.keyCode === 51) {
     // Render even bigger
     console.log('Rendering at 5120x3200', e.keyCode);
     sp.set('w', 5120);
-    // Reload
     window.location.href = `${window.location.pathname}?${sp.toString()}`;
   }
-  // prevent any unwanted default browser behaviour
+  // Prevent any unwanted default browser behaviour
   return false;
 }
 
