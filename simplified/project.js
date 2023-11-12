@@ -378,23 +378,40 @@ function save_output() {
 keyTyped = function (e) {
   // Determine key pressed, apply change and in most cases reload window
   if (e.keyCode === 83 || e.keyCode === 115) {
-    // Save output when the user presses 's' or 'S'
+    // Save output ('s' or 'S')
     save_output();
   } else if (e.keyCode === 49) {
-    // Render at default size
-    console.log('Rendering at default size', e.keyCode);
+    // Render at default size ('1')
+    console.log('Rendering at default size');
     sp.set('w', default_width);
     window.location.href = `${window.location.pathname}?${sp.toString()}`;
   } else if (e.keyCode === 50) {
-    // Render bigger
-    console.log('Rendering at 2560x1600', e.keyCode);
+    // Render bigger ('2')
+    console.log('Rendering at 2560x1600 px');
     sp.set('w', 2560);
     window.location.href = `${window.location.pathname}?${sp.toString()}`;
   } else if (e.keyCode === 51) {
-    // Render even bigger
-    console.log('Rendering at 5120x3200', e.keyCode);
+    // Render even bigger ('3')
+    console.log('Rendering at 5120x3200 px');
     sp.set('w', 5120);
     window.location.href = `${window.location.pathname}?${sp.toString()}`;
+  } else if (e.keyCode === 76 || e.keyCode === 108) {
+    // Default landscape mode ('l' or 'L')
+    console.log('Rendering in landscape mode');
+    sp.set('ratio', 0.625);
+    window.location.href = `${window.location.pathname}?${sp.toString()}`;
+  } else if (e.keyCode === 79 || e.keyCode === 111) {
+    // Square mode ('o' or 'O')
+    console.log('Rendering as a square');
+    sp.set('ratio', 1);
+    window.location.href = `${window.location.pathname}?${sp.toString()}`;
+  } else if (e.keyCode === 80 || e.keyCode === 112) {
+    // Portrait mode ('p' or 'P')
+    console.log('Rendering in portrait mode');
+    sp.set('ratio', 2);
+    window.location.href = `${window.location.pathname}?${sp.toString()}`;
+  } else {
+    console.log('Unknown key', e.key, 'with keycode', e.keyCode, 'pressed');
   }
   // Prevent any unwanted default browser behaviour
   return false;
