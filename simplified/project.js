@@ -97,7 +97,7 @@ function setup() {
   let arc_point_count_max = 16000 * (buffer_width/1000);
   arc_point_count = Math.floor(map($fx.rand(), 0, 1, arc_point_count_min, arc_point_count_max));
   max_point_amplitude = buffer_width / 80;
-  let arc_density = arc_point_count/arc_point_count_max <= 0.33 ? 'Light' : arc_point_count/arc_point_count_max <= 0.67 ? 'Medium' : 'Dense';
+  let arc_density = (arc_point_count - arc_point_count_min)/(arc_point_count_max - arc_point_count_min) <= 0.33 ? 'Light' : arc_point_count/arc_point_count_max <= 0.67 ? 'Medium' : 'Dense';
   scattered_arcs = $fx.rand() <= 0.7 ? false : true;
   let scatter_factor_r = $fx.rand();
   scatter_factor = scatter_factor_r < 0.33 ? 2 : scatter_factor_r < 0.67 ? 3 : 4;
